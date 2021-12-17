@@ -17,6 +17,8 @@ Logforj will currently detect the following types of traffic:
 
 Logforj works off of the assumption that LDAP and JRMP traffic on random ports out to the internet are probably suspect.
 
+Logforj works best being placed on a gateway or border device, such that is can protect the many devices behind it.
+
 Requirements
 ------------
 
@@ -31,8 +33,7 @@ Logforj doesn't rely on port numbers to work out the data but heuristically dete
 
 # Performance
 
-Logforj only cares about the beginning on any TCP session, since it detects the beginning headers of LDAP and JRMP sessions. Once a connection has been analyzed, its connection is marked as _seen_ and the firewall rule need not send Logforj more data for that connection again.
-
+Logforj only cares about the beginning on any TCP session, since it detects the beginning headers of LDAP and JRMP sessions. Once a connection has been analyzed, its connection is marked as _seen_ and the firewall rule need not send Logforj more data for that connection again. This prevents large amounts of traffic needing to be sent to the software.
 
 Getting Started
 ---------------
