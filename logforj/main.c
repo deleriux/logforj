@@ -2,6 +2,7 @@
 #include "logging.h"
 #include "worker.h"
 #include "config.h"
+#include "standalone.h"
 
 #define MODULES_PATH "/sys/module"
 
@@ -15,6 +16,10 @@ static void finish(
   for (int i=0; i < config_get_queue_len(); i++) {
     worker_cancel(i);
   }
+
+  if (config_get_standalone())
+    standalone_destroy();
+
   ELOG(ERROR, "logforj has exited");
 }
 
@@ -63,6 +68,10 @@ int main(
       ELOG(CRITICAL, "Cannot initiailze worker");
       exit(EXIT_FAILURE);
     }
+  }
+
+  if (config_get_standalone()) {
+    standalone_init();
   }
 
   atexit(finish);

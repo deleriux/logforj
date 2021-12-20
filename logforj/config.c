@@ -15,6 +15,7 @@ struct config {
   const char *logfile;
   bool verbose;
   bool force;
+  bool standalone;
 } config;
 
 static inline void print_usage(
@@ -59,6 +60,7 @@ void config_parse_args(
   config.queue_len = 1;
   config.verbose = false;
   config.force = false;
+  config.standalone = true;
 
   static struct option long_options[] = {
     { "help",        no_argument,       NULL, 'h' },
@@ -107,6 +109,7 @@ void config_parse_args(
                1, UINT32_MAX);
         }
         config.seen_mark = (uint32_t)val;
+        config.standalone = false;
       break;
 
       case 'b':
@@ -116,6 +119,7 @@ void config_parse_args(
                1, UINT32_MAX);
         }
         config.bad_mark = (uint32_t)val;
+        config.standalone = false;
       break;
 
       case 'q':
@@ -125,6 +129,7 @@ void config_parse_args(
                1, UINT16_MAX);
         }
         config.queue_id = (uint16_t)val;
+        config.standalone = false;
       break;
 
       case 's':
@@ -134,6 +139,7 @@ void config_parse_args(
                1, ncpus);
         }
         config.queue_len = val;
+        config.standalone = false;
       break;
   
       case 'h':
@@ -162,7 +168,10 @@ void config_parse_args(
   }
 
   /* Apply log file changes */
-  ELOG(WARNING, "Starting %s --seen-mark=%d --bad-mark=%d --queue=%d --queue-size=%d",
+  if (config.standalone)
+    ELOG(WARNING, "Starting %s in standalone mode", PROGNAME);
+  else
+    ELOG(WARNING, "Starting %s --seen-mark=%d --bad-mark=%d --queue=%d --queue-size=%d",
                 PROGNAME, config.seen_mark, config.bad_mark, config.queue_id, config.queue_len);
 
   if (strcmp(config.logfile, "stdout") != 0) {
@@ -214,4 +223,10 @@ bool config_get_force(
     void)
 {
   return config.force;
+}
+
+bool config_get_standalone(
+    void)
+{
+  return config.standalone;
 }
