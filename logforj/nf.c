@@ -688,6 +688,34 @@ err:
   return NULL;
 }
 
+/* Add the meta mark expression to a rule */
+bool nf_rule_add_mark(
+    struct nftnl_rule *rul,
+    uint32_t mark)
+{
+  struct nftnl_expr *exp = NULL;
+
+  if (!rul) {
+    errno = EINVAL;
+    goto err;
+  }
+
+  exp = nftnl_expr_alloc("meta");
+  if (!exp)
+    goto err;
+
+  nftnl_expr_set_u32(exp, NFTNL_EXPR_META_KEY, NFT_META_MARK);
+  nftnl_expr_set_u32(exp, NFTNL_EXPR_META_DREG, NFT_REG_1);
+  nftnl_rule_add_expr(rul, exp);
+
+  return true;
+
+err:
+  if (exp)
+    nftnl_expr_free(exp);
+  return false;
+}
+
 
 /* Add the log expression to a rule */
 bool nf_rule_add_log(
@@ -1499,12 +1527,14 @@ bool nf_transact(
     return false;
 
   /* Cosume all the acks. Expect to get all acks here */
-  if (nl_recv_ack(nf->nl, nf->nacks) < 0)
+  if (nl_recv_ack(nf->nl, nf->nacks) < 0) {
+    nf->nacks = 0;
+    nf->tx_no = -1;
     return false;
+  }
 
   nf->nacks = 0;
   nf->tx_no = -1;
-
   return true;
 }
 
@@ -1862,6 +1892,37 @@ err:
     nftnl_expr_free(obj);
   return false;
 }
+
+bool nf_rule_add_queue(
+    struct nftnl_rule *rul, 
+    uint16_t qnum, 
+    uint16_t num, 
+    uint32_t flags)
+{
+  struct nftnl_expr *exp = NULL;
+
+  if (!rul) {
+    errno = EINVAL;
+    goto err;
+  }
+
+  exp = nftnl_expr_alloc("queue");
+  if (!exp)
+    goto err;
+
+  nftnl_expr_set_u16(exp, NFTNL_EXPR_QUEUE_NUM, qnum);
+  nftnl_expr_set_u16(exp, NFTNL_EXPR_QUEUE_TOTAL, num);
+  nftnl_expr_set_u32(exp, NFTNL_EXPR_QUEUE_FLAGS, flags);
+
+  nftnl_rule_add_expr(rul, exp);
+  return true;
+
+err:
+  if (exp)
+    nftnl_expr_free(exp);
+  return false;
+}
+
 
 
 /* Custom userdata value we set for a timestamp.

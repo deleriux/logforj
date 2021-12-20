@@ -42,6 +42,16 @@ You will need to be running a firewall (either nftables or iptables) on the host
 
 Be aware -- logforj cannot determine the difference between legitimate LDAP traffic and illegitimate.
 
+# Standalone mode
+Simply running `logforj` without any options will run in standalone mode which configures the program to run without any extra firewall configuration. This will create a minimal nftables table, it uses a heuristic to determine to the default output device, then sets up a relevant table, chain and minimal rules in the forward and output chains to enable logforj to run.
+
+For singular hosts wanting to protect themselves, or simple unmanaged routers this shold suffice to block most attacks.
+If you need something more advanced, such as if you are connecting to a legitimate LDAP server you should consider using managed mode.
+
+# Managed mode
+
+If you pass any command line options regarding the queue you want to use to `logforj` then no default tables or rules are created, so you can setup a customized ruleset to add exceptions to hosts. This is the ideal solution where you need finer-grained control as to what traffic is configured.
+
 A minimal nftables configuration might look like:
 ```
 # Add a new table, this makes it much easier to manage logforj independently.

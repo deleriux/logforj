@@ -14,6 +14,7 @@
 #include <libnftnl/gen.h>
 #include <linux/netfilter/nf_tables.h>
 #include <linux/netfilter.h>
+#include <linux/netfilter/nf_conntrack_common.h>
 #include <linux/netfilter/nfnetlink_log.h>
 #include <linux/netfilter/nfnetlink_queue.h>
 
@@ -95,6 +96,8 @@ bool nf_rule_add_set(struct nftnl_rule *rul, int dir, struct nftnl_set *set);
 bool nf_rule_add_quota(struct nftnl_rule *rul, struct nftnl_obj *quo);
 bool nf_rule_add_limit(struct nftnl_rule *rul, int rate, int unit);
 bool nf_rule_add_log(struct nftnl_rule *rul, uint16_t log_group, const char *prefix);
+bool nf_rule_add_mark(struct nftnl_rule *rul, uint32_t mark);
+bool nf_rule_add_queue(struct nftnl_rule *rul, uint16_t qnum, uint16_t num, uint32_t flags);
 bool nf_rule_set_timestamp(struct nftnl_rule *rul);
 time_t nf_rule_get_timestamp(struct nftnl_rule *rul);
 const char * nf_rule_get_comment(struct nftnl_rule *rul);
