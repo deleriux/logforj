@@ -109,10 +109,12 @@ PROGRAMS = $(bin_PROGRAMS)
 am_logforj_OBJECTS = logforj-main.$(OBJEXT) logforj-logging.$(OBJEXT) \
 	logforj-config.$(OBJEXT) logforj-nq.$(OBJEXT) \
 	logforj-heuristic.$(OBJEXT) logforj-worker.$(OBJEXT) \
-	logforj-nl.$(OBJEXT)
+	logforj-nf.$(OBJEXT) logforj-nl.$(OBJEXT) \
+	logforj-standalone.$(OBJEXT)
 logforj_OBJECTS = $(am_logforj_OBJECTS)
 am__DEPENDENCIES_1 =
-logforj_DEPENDENCIES = $(am__DEPENDENCIES_1) ../der/libder.la
+logforj_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	../der/libder.la
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -138,7 +140,8 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/logforj-config.Po \
 	./$(DEPDIR)/logforj-heuristic.Po \
 	./$(DEPDIR)/logforj-logging.Po ./$(DEPDIR)/logforj-main.Po \
-	./$(DEPDIR)/logforj-nl.Po ./$(DEPDIR)/logforj-nq.Po \
+	./$(DEPDIR)/logforj-nf.Po ./$(DEPDIR)/logforj-nl.Po \
+	./$(DEPDIR)/logforj-nq.Po ./$(DEPDIR)/logforj-standalone.Po \
 	./$(DEPDIR)/logforj-worker.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -234,6 +237,8 @@ MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MNL_CFLAGS = @MNL_CFLAGS@
 MNL_LIBS = @MNL_LIBS@
+NFTNL_CFLAGS = @NFTNL_CFLAGS@
+NFTNL_LIBS = @NFTNL_LIBS@
 NM = @NM@
 NMEDIT = @NMEDIT@
 OBJDUMP = @OBJDUMP@
@@ -310,24 +315,27 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 logforj_SOURCES = logging.h \
-                 nl.h \
                  main.c \
                  logging.c \
                  config.c \
                  nq.c \
                  heuristic.c \
                  worker.c \
-                 nl.c
+                 nf.c \
+                 nl.c \
+                 standalone.c
 
 noinst_HEADERS = logging.h \
                   nl.h \
                   nq.h \
+                  nf.h \
                   heuristic.h \
                   worker.h \
+                  standalone.h \
                   config.h
 
-logforj_CFLAGS = $(MNL_CFLAGS) -I../der -Wall 
-logforj_LDADD = $(MNL_LIBS) ../der/libder.la
+logforj_CFLAGS = $(MNL_CFLAGS) $(NFTNL_CFLAGS) -I../der -Wall 
+logforj_LDADD = $(MNL_LIBS) $(NFTNL_LIBS) ../der/libder.la
 all: all-am
 
 .SUFFIXES:
@@ -425,8 +433,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logforj-heuristic.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logforj-logging.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logforj-main.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logforj-nf.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logforj-nl.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logforj-nq.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logforj-standalone.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logforj-worker.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
@@ -543,6 +553,20 @@ logforj-worker.obj: worker.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(logforj_CFLAGS) $(CFLAGS) -c -o logforj-worker.obj `if test -f 'worker.c'; then $(CYGPATH_W) 'worker.c'; else $(CYGPATH_W) '$(srcdir)/worker.c'; fi`
 
+logforj-nf.o: nf.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(logforj_CFLAGS) $(CFLAGS) -MT logforj-nf.o -MD -MP -MF $(DEPDIR)/logforj-nf.Tpo -c -o logforj-nf.o `test -f 'nf.c' || echo '$(srcdir)/'`nf.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/logforj-nf.Tpo $(DEPDIR)/logforj-nf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='nf.c' object='logforj-nf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(logforj_CFLAGS) $(CFLAGS) -c -o logforj-nf.o `test -f 'nf.c' || echo '$(srcdir)/'`nf.c
+
+logforj-nf.obj: nf.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(logforj_CFLAGS) $(CFLAGS) -MT logforj-nf.obj -MD -MP -MF $(DEPDIR)/logforj-nf.Tpo -c -o logforj-nf.obj `if test -f 'nf.c'; then $(CYGPATH_W) 'nf.c'; else $(CYGPATH_W) '$(srcdir)/nf.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/logforj-nf.Tpo $(DEPDIR)/logforj-nf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='nf.c' object='logforj-nf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(logforj_CFLAGS) $(CFLAGS) -c -o logforj-nf.obj `if test -f 'nf.c'; then $(CYGPATH_W) 'nf.c'; else $(CYGPATH_W) '$(srcdir)/nf.c'; fi`
+
 logforj-nl.o: nl.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(logforj_CFLAGS) $(CFLAGS) -MT logforj-nl.o -MD -MP -MF $(DEPDIR)/logforj-nl.Tpo -c -o logforj-nl.o `test -f 'nl.c' || echo '$(srcdir)/'`nl.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/logforj-nl.Tpo $(DEPDIR)/logforj-nl.Po
@@ -556,6 +580,20 @@ logforj-nl.obj: nl.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='nl.c' object='logforj-nl.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(logforj_CFLAGS) $(CFLAGS) -c -o logforj-nl.obj `if test -f 'nl.c'; then $(CYGPATH_W) 'nl.c'; else $(CYGPATH_W) '$(srcdir)/nl.c'; fi`
+
+logforj-standalone.o: standalone.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(logforj_CFLAGS) $(CFLAGS) -MT logforj-standalone.o -MD -MP -MF $(DEPDIR)/logforj-standalone.Tpo -c -o logforj-standalone.o `test -f 'standalone.c' || echo '$(srcdir)/'`standalone.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/logforj-standalone.Tpo $(DEPDIR)/logforj-standalone.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='standalone.c' object='logforj-standalone.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(logforj_CFLAGS) $(CFLAGS) -c -o logforj-standalone.o `test -f 'standalone.c' || echo '$(srcdir)/'`standalone.c
+
+logforj-standalone.obj: standalone.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(logforj_CFLAGS) $(CFLAGS) -MT logforj-standalone.obj -MD -MP -MF $(DEPDIR)/logforj-standalone.Tpo -c -o logforj-standalone.obj `if test -f 'standalone.c'; then $(CYGPATH_W) 'standalone.c'; else $(CYGPATH_W) '$(srcdir)/standalone.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/logforj-standalone.Tpo $(DEPDIR)/logforj-standalone.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='standalone.c' object='logforj-standalone.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(logforj_CFLAGS) $(CFLAGS) -c -o logforj-standalone.obj `if test -f 'standalone.c'; then $(CYGPATH_W) 'standalone.c'; else $(CYGPATH_W) '$(srcdir)/standalone.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -694,8 +732,10 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/logforj-heuristic.Po
 	-rm -f ./$(DEPDIR)/logforj-logging.Po
 	-rm -f ./$(DEPDIR)/logforj-main.Po
+	-rm -f ./$(DEPDIR)/logforj-nf.Po
 	-rm -f ./$(DEPDIR)/logforj-nl.Po
 	-rm -f ./$(DEPDIR)/logforj-nq.Po
+	-rm -f ./$(DEPDIR)/logforj-standalone.Po
 	-rm -f ./$(DEPDIR)/logforj-worker.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
@@ -746,8 +786,10 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/logforj-heuristic.Po
 	-rm -f ./$(DEPDIR)/logforj-logging.Po
 	-rm -f ./$(DEPDIR)/logforj-main.Po
+	-rm -f ./$(DEPDIR)/logforj-nf.Po
 	-rm -f ./$(DEPDIR)/logforj-nl.Po
 	-rm -f ./$(DEPDIR)/logforj-nq.Po
+	-rm -f ./$(DEPDIR)/logforj-standalone.Po
 	-rm -f ./$(DEPDIR)/logforj-worker.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic

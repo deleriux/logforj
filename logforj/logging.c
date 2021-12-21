@@ -28,8 +28,70 @@ void log_setlevel(
 
 
 
+bool log_outfile(
+  const char *path)
+{
+  int fd = -1;
+
+  if (!path) {
+    errno = EFAULT;
+    return false;
+  }
+
+  /* Dup2 the output */
+  fd = open(path, O_CREAT|O_WRONLY|O_APPEND, 0666);
+  if (fd < 0)
+    return false;
+
+  fflush(stdout);
+
+  if (dup2(fd, STDOUT_FILENO) < 0) {
+    close(fd);
+    return false;
+  }
+
+  setlinebuf(stdout);
+  close(fd);
+
+  ELOG(VERBOSE, "Switched log file to %s", path);
+  return true;
+}
+
+
+
+bool log_errfile(
+  const char *path)
+{
+  int fd = -1;
+
+  if (!path) {
+    errno = EFAULT;
+    return false;
+  }
+
+  /* Dup2 the output */
+  fd = open(path, O_CREAT|O_WRONLY|O_APPEND, 0666);
+  if (fd < 0)
+    return false;;
+
+  if (dup2(fd, STDERR_FILENO) < 0) {
+    close(fd);
+    return false;;
+  }
+
+  setlinebuf(stderr);
+  close(fd);
+
+  ELOG(VERBOSE, "Swithced error log file to %s", path);
+  return true;
+}
+
+
+
+
+
 /* Print an error */
-void log_err(
+void log_line(
     const char *file,
     const char *func,
     int lineno,
@@ -87,7 +149,7 @@ void log_err(
   assert(rc > 0);
 
   va_start(ap, fmt);
-  vfprintf(stdout, fmtstr, ap);
+  vfprintf(err <= INFO ? stdout : stderr, fmtstr, ap);
   va_end(ap);
 
   return;

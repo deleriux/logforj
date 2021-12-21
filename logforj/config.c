@@ -31,7 +31,7 @@ static inline void print_help(
 "Block Log4j/Log4Shell attacks by matching LDAP traffic and JRMP session traffic.\n\n"
 "OPTIONS\n"
 "    --help                -h          Print this help\n"
-"    --log-file            -l LOGFILE  Log to file (default: stdout).\n"
+"    --log-file            -l LOGFILE  Log to file (default: stderr).\n"
 "    --seen-mark           -m MARK     Netfilter mark to use on checked connections (default: 9)\n"
 "    --bad-mark            -b MARK     Netfilter mark to use on matched Log4j connections (default: 10)\n"
 "    --queue               -q ID       Netfilter queue-id to attach to (default: 10)\n"
@@ -46,14 +46,13 @@ void config_parse_args(
     int argc, 
     char **argv)
 {
-  int lf = -1;
   char c;
   int val; 
   int optidx;
   int ncpus = sysconf(_SC_NPROCESSORS_ONLN);
 
   /* Set config defaults */
-  config.logfile = "stdout";
+  config.logfile = "stderr";
   config.seen_mark = 9;
   config.bad_mark = 10;
   config.queue_id = 10;
@@ -84,11 +83,6 @@ void config_parse_args(
         /* Open in append mode logfile */
         config.logfile = strdup(optarg);
         if (!config.logfile) {
-          ELOGERR(CRITICAL, "Cannot set log file %s", optarg);
-          exit(EXIT_FAILURE);
-        }
-        lf = open(optarg, O_WRONLY|O_APPEND|O_CREAT, 0666);
-        if (lf < 0) {
           ELOGERR(CRITICAL, "Cannot set log file %s", optarg);
           exit(EXIT_FAILURE);
         }
@@ -174,18 +168,12 @@ void config_parse_args(
     ELOG(WARNING, "Starting %s --seen-mark=%d --bad-mark=%d --queue=%d --queue-size=%d",
                 PROGNAME, config.seen_mark, config.bad_mark, config.queue_id, config.queue_len);
 
-  if (strcmp(config.logfile, "stdout") != 0) {
+  if (strcmp(config.logfile, "stderr") != 0) {
     ELOG(WARNING, "Switching to logfile %s", config.logfile);
-
-    fflush(stdout);
-    if (dup2(lf, STDOUT_FILENO) < 0) {
-      ELOGERR(CRITICAL, "Cannot set log file %s", optarg);
+    if (!log_outfile(config.logfile) || !log_errfile(config.logfile)) {
+      ELOGERR(CRITICAL, "Cannot switch to logfile %s", config.logfile);
       exit(EXIT_FAILURE);
     }
-
-    /* Correctly configure line buffering semantics */
-    setlinebuf(stdout);
-    close(lf);
 
     ELOG(INFO, "Switched to logfile %s", config.logfile);
   }

@@ -1,4 +1,4 @@
-AC_INIT([logforj], [0.3], [matthew@ife.onl])
+AC_INIT([logforj], [0.4], [matthew@ife.onl])
 
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign -Wall -Wno-extra-portability -Werror subdir-objects])
@@ -8,6 +8,7 @@ AC_PROG_CC
 AC_CONFIG_HEADERS([config.h])
 
 PKG_CHECK_MODULES([MNL], libmnl)
+PKG_CHECK_MODULES([NFTNL], libnftnl)
 
 AC_SEARCH_LIBS([pthread_key_create], [pthread])
 

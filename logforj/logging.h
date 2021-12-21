@@ -4,8 +4,8 @@
 #include "common.h"
 
 #define LOGSET(type) static const char * __logtype = type;
-#define ELOG(levl, fmt, ...) log_err(__FILE__, __func__, __LINE__, levl, __logtype, -1, fmt, ##__VA_ARGS__)
-#define ELOGERR(levl, fmt, ...) log_err(__FILE__, __func__, __LINE__, levl, __logtype, errno, fmt, ##__VA_ARGS__)
+#define ELOG(levl, fmt, ...) log_line(__FILE__, __func__, __LINE__, levl, __logtype, -1, fmt, ##__VA_ARGS__)
+#define ELOGERR(levl, fmt, ...) log_line(__FILE__, __func__, __LINE__, levl, __logtype, errno, fmt, ##__VA_ARGS__)
 
 #define DEBUG3 800
 #define DEBUG2 400
@@ -20,5 +20,8 @@
 void log_setlevel(int level);
 int log_getlevel(void);
 
-void log_err(const char *file, const char *func, int lineno, int level, const char *type, int err, char *fmt, ...);
+bool log_errfile(const char *path);
+bool log_outfile(const char *path);
+
+void log_line(const char *file, const char *func, int lineno, int level, const char *type, int err, char *fmt, ...);
 #endif
