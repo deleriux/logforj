@@ -1,6 +1,6 @@
 AC_INIT([logforj], [0.4], [matthew@ife.onl])
 
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIRS([m4])
 AM_INIT_AUTOMAKE([foreign -Wall -Wno-extra-portability -Werror subdir-objects])
 
 LT_INIT
@@ -11,13 +11,7 @@ PKG_CHECK_MODULES([MNL], libmnl)
 PKG_CHECK_MODULES([NFTNL], libnftnl)
 
 AC_SEARCH_LIBS([pthread_key_create], [pthread])
-
-AX_CHECK_COMPILE_FLAG([-std=c11], [
-  CFLAGS+=" -std=c11"
-], [
-  echo "C compiler cannot compile C11 code"
-  exit -1
-])
+CFLAGS+="-std=C99"
 
 AC_SUBST([AM_CPPFLAGS], [-D_GNU_SOURCE])
 AC_CONFIG_FILES([Makefile der/Makefile logforj/Makefile])
