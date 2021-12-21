@@ -11,7 +11,7 @@ PKG_CHECK_MODULES([MNL], libmnl)
 PKG_CHECK_MODULES([NFTNL], libnftnl)
 
 AC_SEARCH_LIBS([pthread_key_create], [pthread])
-CFLAGS+=" -std=C99"
+CFLAGS+=" -std=c99"
 
 AC_SUBST([AM_CPPFLAGS], [-D_GNU_SOURCE])
 AC_CONFIG_FILES([Makefile der/Makefile logforj/Makefile])
